@@ -17,7 +17,7 @@ const DYMENSION_CONNECT_NETWORK_ID = 'rollapp_1234-1';
 
 ### Step 2: Embed the Widget
 Embed the Dymension Connect Widget into your application using an iframe. This setup enables your users to interact with the widget directly from your UI.
-```javascript
+```html
 <iframe
     ref={iframeRef}
     onLoad={initModal}
