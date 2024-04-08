@@ -1,4 +1,7 @@
 # Dymension Connect
+<p align="center">
+  <img src="./images/widget.png" alt="widget example">
+</p>
 
 ## Overview
 The Dymension Connect Widget allows RollApps to easily integrate wallet connection functionality into their applications, 
