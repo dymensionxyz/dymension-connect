@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
 
 const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
-const DYMENSION_CONNECT_NETWORK_ID = 'rollapp_1234-1';
+const DYMENSION_CONNECT_NETWORK_ID = 'dymension_1100-1';
 
 function App() {
     const [dymensionConnectOpen, setDymensionConnectOpen] = useState(false);
