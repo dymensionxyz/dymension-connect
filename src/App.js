@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
 
 const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
-const DYMENSION_CONNECT_NETWORK_ID = 'dymension_1100-1';
+const DYMENSION_CONNECT_NETWORK_IDS = ['nim_1122-1'];
 
 function App() {
     const [dymensionConnectOpen, setDymensionConnectOpen] = useState(false);
@@ -25,7 +25,10 @@ function App() {
         sendMessage({
             type: 'stylesChange',
             styles: {
-                '--control-color-normal': 'rgb(31 35 30)',
+                '--black-light': 'rgb(63 81 59)',
+                '--black-light-rgb': '63, 81, 59',
+                '--black-dark': 'rgb(27 40 24)',
+                '--black-dark-rgb': '27, 40, 24',
                 '--background-color': 'rgb(42 59 42)',
                 '--background-color-secondary': 'rgb(63 78 63)'
             }
@@ -55,12 +58,10 @@ function App() {
             }
             if (event.data.type === 'connect') {
                 setAddress(event.data.hexAddress);
-                sendMessage({type: 'modalTypeChange', modalType: 'account'});
                 updateTriggerBoundingRect();
             }
             if (event.data.type === 'disconnect') {
                 setAddress('');
-                sendMessage({type: 'modalTypeChange', modalType: 'wallet-selector'});
                 updateTriggerBoundingRect();
             }
         }
@@ -88,7 +89,7 @@ function App() {
                 allow='clipboard-read; clipboard-write'
                 title='dymension-connect'
                 className='dymension-connect-iframe'
-                src={`${DYMENSION_CONNECT_URL}/connect?networkId=${DYMENSION_CONNECT_NETWORK_ID}`}
+                src={`${DYMENSION_CONNECT_URL}/connect?networkIds=${DYMENSION_CONNECT_NETWORK_IDS.join(',')}`}
             />
         </div>
     );

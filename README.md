@@ -50,7 +50,6 @@ sendMessage({
     }
 });
 sendMessage({type: 'menuAlignChange', align: 'center'});
-sendMessage({type: 'modalTypeChange', modalType: 'wallet-selector'});
 ```
 #### Optional messages that can be sent to the widget:
 - **`triggerBoundingRectChange`**: Adjusts the widget's position by specifying the trigger element's bounding rectangle.
@@ -68,11 +67,6 @@ sendMessage({type: 'modalTypeChange', modalType: 'wallet-selector'});
             // Add more custom style properties as needed
         }
     });
-    ```
-- **`modalTypeChange`**: Switches the widget's modal type, allowing control over the displayed content (e.g., switching between wallet selector and account details).
-    ```javascript
-    sendMessage({ type: 'modalTypeChange', modalType: 'wallet-selector' /* Or 'account' */ });
-    ```
 - **`menuAlignChange`**: Alters the alignment of the widget's menu relative to the trigger element, enhancing layout consistency and visual harmony.
     ```javascript
     sendMessage({ type: 'menuAlignChange', align: 'center' /* Or 'left', 'right' */ });
@@ -97,12 +91,10 @@ useEffect(() => {
                 break;
             case 'connect':
                 setAddress(event.data.hexAddress);
-                sendMessage({type: 'modalTypeChange', modalType: 'account'});
                 updateTriggerBoundingRect();
                 break;
             case 'disconnect':
                 setAddress('');
-                sendMessage({type: 'modalTypeChange', modalType: 'wallet-selector'});
                 updateTriggerBoundingRect();
                 break;
             default:
