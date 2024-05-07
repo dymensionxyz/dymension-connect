@@ -44,7 +44,10 @@ const sendMessage = useCallback((message) => {
 sendMessage({
     type: 'stylesChange',
     styles: {
-        '--control-color-normal': 'rgb(31 35 30)',
+        '--black-light': 'rgb(63 81 59)',
+        '--black-light-rgb': '63, 81, 59',
+        '--black-dark': 'rgb(27 40 24)',
+        '--black-dark-rgb': '27, 40, 24',
         '--background-color': 'rgb(42 59 42)',
         '--background-color-secondary': 'rgb(63 78 63)'
     }
