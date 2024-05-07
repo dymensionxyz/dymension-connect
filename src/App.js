@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
 
-const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
+const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz';
 const DYMENSION_CONNECT_NETWORK_IDS = ['nim_1122-1'];
 
 function App() {
