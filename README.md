@@ -42,7 +42,7 @@ const sendMessage = useCallback((message) => {
 }, []);
 
 sendMessage({
-    type: 'stylesChange',
+    type: 'setStyles',
     styles: {
         '--black-light': 'rgb(63 81 59)',
         '--black-light-rgb': '63, 81, 59',
@@ -52,17 +52,17 @@ sendMessage({
         '--background-color-secondary': 'rgb(63 78 63)'
     }
 });
-sendMessage({type: 'menuAlignChange', align: 'center'});
+sendMessage({type: 'setMenuAlign', align: 'center'});
 ```
 #### Optional messages that can be sent to the widget:
-- **`triggerBoundingRectChange`**: Adjusts the widget's position by specifying the trigger element's bounding rectangle.
+- **`setTriggerBoundingRect`**: Adjusts the widget's position by specifying the trigger element's bounding rectangle.
     ```javascript
-    sendMessage({ type: 'triggerBoundingRectChange', rect: /* DOMRect object */ });
+    sendMessage({ type: 'setTriggerBoundingRect', rect: /* DOMRect object */ });
     ```
-- **`stylesChange`**: Modifies the widget's styles to better match your application's theme.
+- **`setStyles`**: Modifies the widget's styles to better match your application's theme.
     ```javascript
     sendMessage({
-        type: 'stylesChange',
+        type: 'setStyles',
         styles: {
             '--control-color-normal': 'yourValue',
             '--background-color': 'yourValue',
@@ -70,9 +70,9 @@ sendMessage({type: 'menuAlignChange', align: 'center'});
             // Add more custom style properties as needed
         }
     });
-- **`menuAlignChange`**: Alters the alignment of the widget's menu relative to the trigger element, enhancing layout consistency and visual harmony.
+- **`setMenuAlign`**: Alters the alignment of the widget's menu relative to the trigger element, enhancing layout consistency and visual harmony.
     ```javascript
-    sendMessage({ type: 'menuAlignChange', align: 'center' /* Or 'left', 'right' */ });
+    sendMessage({ type: 'setMenuAlign', align: 'center' /* Or 'left', 'right' */ });
     ```
   
 ### Step 4: Listen for Messages from the Widget
