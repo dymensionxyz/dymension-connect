@@ -16,23 +16,41 @@ Specify the connection URL and network ID for your widget instance. These should
 ```javascript
 const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
 const DYMENSION_CONNECT_NETWORK_ID = 'dymension_1100-1';
+const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'adym'
 ```
 
 ### Step 2: Embed the Widget
 Embed the Dymension Connect Widget into your application using an iframe. This setup enables your users to interact with the widget directly from your UI.
 ```jsx
 <iframe
-    ref={iframeRef}
-    onLoad={initModal}
-    style={{ display: dymensionConnectOpen ? 'block' : 'none' }}
-    allow="clipboard-read; clipboard-write"
-    title="dymension-connect"
-    className="dymension-connect-iframe"
-    src={`${DYMENSION_CONNECT_URL}/connect?networkId=${DYMENSION_CONNECT_NETWORK_ID}`}
+  ref={iframeRef}
+  onLoad={initModal}
+  style={{display: dymensionConnectOpen ? 'block' : 'none'}}
+  allow='clipboard-read; clipboard-write; camera'
+  title='dymension-connect'
+  className='dymension-connect-iframe'
+  src={`${DYMENSION_CONNECT_URL}/connect?networkIds=${DYMENSION_CONNECT_NETWORK_IDS.join(',')}`}
 />
 ```
 
-### Step 3: Communicate with the Widget
+### Step 3: Passing a `qrAccount` for Quick-Auth Connections
+If your application receives a `qrAccount` query parameter from the URL (when a user scans a Quick-Auth QR code), you can pass this value to the Dymension Connect Widget so it can automatically initiate a Quick-Auth connection. Here’s how you might retrieve the `qrAccount` and include it in the iframe's `src`:
+```jsx
+const qrAccount = useMemo(() => new URLSearchParams(window.location.search).get('qrAccount'), []);
+
+<iframe
+  ref={iframeRef}
+  onLoad={initModal}
+  style={{display: dymensionConnectOpen || qrAccount ? 'block' : 'none'}}
+  allow='clipboard-read; clipboard-write; camera'
+  title='dymension-connect'
+  className='dymension-connect-iframe'
+  src={`${DYMENSION_CONNECT_URL}/connect${qrAccount ? `/account/${qrAccount}` : ''}?networkIds=${DYMENSION_CONNECT_NETWORK_IDS.join(',')}`}
+/>
+```
+When the widget detects qrAccount, it will prompt the user for their PIN code and automatically connect to the specified account. This provides a seamless login flow, especially for QR-based interactions.
+
+### Step 4: Communicate with the Widget
 Maximize the utility and adaptability of the Dymension Connect Widget within your application by leveraging direct messaging. 
 This advanced method enables real-time communication with the widget's iframe, allowing you to dynamically adjust its appearance and behavior to suit user interactions and your application's styling needs. 
 Utilize the postMessage API to send messages from your application to the widget, enhancing user experience through customization and control.
@@ -74,46 +92,66 @@ sendMessage({type: 'setMenuAlign', align: 'center'});
     ```javascript
     sendMessage({ type: 'setMenuAlign', align: 'center' /* Or 'left', 'right' */ });
     ```
+
+- **`executeTx`**: You can send a transaction to the connected wallet using the `executeTx` message.:
+    ```javascript
+    const sendTokens = useCallback(() => {
+      sendMessage({
+        type: 'executeTx',
+        messages: [{
+          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+          value: { fromAddress, toAddress, amount }
+        }]
+      });
+    }, [address]);
+    ```
   
-### Step 4: Listen for Messages from the Widget
+### Step 5: Listen for Messages from the Widget
 To create a fully interactive experience, your application should listen for messages from the Dymension Connect Widget. 
 This allows your app to react to user actions within the widget, such as connecting or disconnecting a wallet. 
 Implement the listener within a `useEffect` to handle these messages appropriately:
 ```javascript
 useEffect(() => {
-    const handleMessage = (event) => {
-        if (event.origin !== DYMENSION_CONNECT_URL) {
-            return;
-        }
-        switch (event.data.type) {
-            case 'ready':
-                setDymensionConnectReady(true);
-                break;
-            case 'close':
-                setDymensionConnectOpen(false);
-                break;
-            case 'connect':
-                setAddress(event.data.hexAddress);
-                updateTriggerBoundingRect();
-                break;
-            case 'disconnect':
-                setAddress('');
-                updateTriggerBoundingRect();
-                break;
-            default:
-                break;
-        }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+  const handleMessage = (event) => {
+    if (event.origin !== DYMENSION_CONNECT_URL) {
+      return;
+    }
+    if (event.data.type === 'ready') {
+      setDymensionConnectReady(true);
+    }
+    if (event.data.type === 'menu-visible') {
+      setDymensionConnectOpen(event.data.value);
+    }
+    if (event.data.type === 'connect') {
+      setHexAddress(event.data.hexAddress);
+      setAddress(event.data.address);
+      updateTriggerBoundingRect();
+    }
+    if (event.data.type === 'disconnect') {
+      setHexAddress('');
+      setAddress('');
+      updateTriggerBoundingRect();
+    }
+    if (event.data.type === 'tx-response') {
+      setBroadcasting(false);
+      console.log(event.data.response || event.data.error);
+    }
+    if (event.data.type === 'notification') {
+      console.log(event.data.messages);
+    }
+  }
+  window.addEventListener('message', handleMessage);
+  return () => window.removeEventListener('message', handleMessage);
 }, [initModal, sendMessage, updateTriggerBoundingRect]);
 ```
+
 #### Optional messages that can be received from the widget:
 - **`ready`**: Indicates the widget has fully loaded and is ready for user interaction.
-- **`close`**: Signifies the user has closed the widget, allowing you to hide the widget interface or reset its state.
-- **`connect`**: Notifies that a user has successfully connected their wallet. This message includes the user's address (bech32 address and hexAddress), enabling you to update the UI or trigger further actions.
+- **`menu-visible`**: Tells you whether the widget’s menu is visible. The `value` property (`true` or `false`) reflects the menu’s state. You can use this to show or hide other UI elements accordingly.
+- **`connect`**: Notifies that a user has successfully connected their wallet. This message includes both the Bech32 address (`event.data.address`) and the Hex address (`event.data.hexAddress`), enabling you to update your UI or trigger further actions.
 - **`disconnect`**: Indicates the user has disconnected their wallet. Use this message to clear user data from your UI or revert to a default state.
+- **`tx-response`**: Returns the outcome of a transaction broadcast that you initiated with the `executeTx` message. The response may contain details of the successfully broadcasted transaction (`event.data.response`) or an error message (`event.data.error`).
+- **`notification`**: Passes along any notification messages from the widget (`event.data.messages`). You can log or display these notifications in your UI as needed.
 
 Listening for these messages and implementing corresponding actions in your application ensures a seamless and responsive experience for users interacting with the Dymension Connect Widget.
 
