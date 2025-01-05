@@ -42,6 +42,9 @@ function App() {
         sendMessage({type: 'setMenuAlign', align: 'center'});
     }, [sendMessage, updateTriggerBoundingRect]);
 
+    const connectWallet = useCallback((walletType) =>
+        sendMessage({type: 'connect', networkId: DYMENSION_CONNECT_NETWORK_IDS[0], walletType}), []);
+
     const sendToMyself = useCallback(() => {
         setBroadcasting(true);
         sendMessage({
@@ -94,6 +97,9 @@ function App() {
             if (event.data.type === 'notification') {
                 setNotifications(event.data.messages);
             }
+            if (event.data.type === 'wallet-error') {
+                setTimeout(() => alert(event.data.error?.message), 50);
+            }
         }
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
@@ -124,6 +130,14 @@ function App() {
             <br />
             <button disabled={!address || broadcasting} onClick={sendToMyself}>
                 Send 1 token to myself {broadcasting ? '- broadcasting' : ''}
+            </button>
+            <br />
+            <button onClick={() => connectWallet('Keplr')}>
+                Connect to Keplr
+            </button>
+            <br />
+            <button onClick={() => connectWallet('MetaMask')}>
+                Connect to MetaMask
             </button>
             <div className='snack-bar-messages'>
                 {notifications.map((notification) =>

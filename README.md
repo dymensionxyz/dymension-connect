@@ -93,6 +93,17 @@ sendMessage({type: 'setMenuAlign', align: 'center'});
     sendMessage({ type: 'setMenuAlign', align: 'center' /* Or 'left', 'right' */ });
     ```
 
+- **`connect`** (supports Keplr, MetaMask and Leap): Triggers a direct connection to a specified wallet type without opening the widget’s default UI flow.
+    ```javascript
+    const connectWallet = useCallback((walletType) => {
+      sendMessage({
+        type: 'connect',
+        networkId: DYMENSION_CONNECT_NETWORK_IDS[0], 
+        walletType, // one of 'Keplr', 'MetaMask', 'Leap'
+      });
+    }, [sendMessage]);
+    ```
+
 - **`executeTx`**: You can send a transaction to the connected wallet using the `executeTx` message.:
     ```javascript
     const sendTokens = useCallback(() => {
@@ -139,6 +150,9 @@ useEffect(() => {
     if (event.data.type === 'notification') {
       console.log(event.data.messages);
     }
+    if (event.data.type === 'wallet-error') {
+      console.log(event.data.error);
+    }
   }
   window.addEventListener('message', handleMessage);
   return () => window.removeEventListener('message', handleMessage);
@@ -152,6 +166,7 @@ useEffect(() => {
 - **`disconnect`**: Indicates the user has disconnected their wallet. Use this message to clear user data from your UI or revert to a default state.
 - **`tx-response`**: Returns the outcome of a transaction broadcast that you initiated with the `executeTx` message. The response may contain details of the successfully broadcasted transaction (`event.data.response`) or an error message (`event.data.error`).
 - **`notification`**: Passes along any notification messages from the widget (`event.data.messages`). You can log or display these notifications in your UI as needed.
+- **`wallet-error`**: Notifies your application of an error that occurred during a wallet connection attempt. You can handle these errors by displaying a user-friendly message, logging for debugging, etc.
 
 Listening for these messages and implementing corresponding actions in your application ensures a seamless and responsive experience for users interacting with the Dymension Connect Widget.
 
