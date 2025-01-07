@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 
-const DYMENSION_CONNECT_URL = 'http://localhost:3000';
-const DYMENSION_CONNECT_NETWORK_IDS = ['evmtestiroagain_283331-1'];
-const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'aevm'
+const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
+const DYMENSION_CONNECT_NETWORK_IDS = ['dymension_1100-1'];
+const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'adym'
 
 function App() {
     const [dymensionConnectOpen, setDymensionConnectOpen] = useState(false);

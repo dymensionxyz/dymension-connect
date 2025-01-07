@@ -15,7 +15,7 @@ To integrate the Dymension Connect Widget into your application, follow these st
 Specify the connection URL and network ID for your widget instance. These should match the blockchain network your application interacts with.
 ```javascript
 const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz/';
-const DYMENSION_CONNECT_NETWORK_ID = 'dymension_1100-1';
+const DYMENSION_CONNECT_NETWORK_IDS = ['dymension_1100-1'];
 const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'adym'
 ```
 
