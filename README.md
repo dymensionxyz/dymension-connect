@@ -93,7 +93,7 @@ sendMessage({type: 'setMenuAlign', align: 'center'});
     sendMessage({ type: 'setMenuAlign', align: 'center' /* Or 'left', 'right' */ });
     ```
 
-- **`connect`** (supports Keplr, MetaMask and Leap): Triggers a direct connection to a specified wallet type without opening the widget’s default UI flow. Passing `undefined` as the wallet type will disconnect the currently connected wallet.
+- **`connect`** (supports Keplr, MetaMask and Leap): Triggers a direct connection to a specified wallet type without opening the widget’s default UI flow. Passing `''` as the wallet type will disconnect the currently connected wallet.
     ```javascript
     const connectWallet = useCallback((walletType) => {
       sendMessage({
