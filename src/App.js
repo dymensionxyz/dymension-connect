@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 
-const DYMENSION_CONNECT_URL = 'https://testnet.dymension.xyz';
-const DYMENSION_CONNECT_NETWORK_IDS = ['rollappevm_1234-1'];
-const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'arax'
+const DYMENSION_CONNECT_URL = 'https://portal.dymension.xyz';
+const DYMENSION_CONNECT_NETWORK_IDS = ['dymension_1100-1'];
+const DYMENSION_CONNECT_NETWORK_MAIN_DENOM = 'adym'
 
 function App() {
     const [dymensionConnectOpen, setDymensionConnectOpen] = useState(false);
@@ -60,6 +60,35 @@ function App() {
         })
     }, [address]);
 
+    const executeWasmContract = useCallback(() => {
+        setBroadcasting(true);
+        sendMessage({
+            type: 'executeTx',
+            messages: [{
+                typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                value: {
+                    sender: "uod126t8x4ysunpwp52u9clskp4gjvz7utxe7rpjcn",
+                    contract: "uod1aakfpghcanxtc45gpqlx8j3rq0zcpyf49qmhm9mdjrfx036h4z5sm3q99x",
+                    msg: new TextEncoder().encode(JSON.stringify({
+                        place_option: {
+                            direction: "up",
+                            expiration: 1700000000,
+                            bet_amount: {
+                                denom: "uawsm",
+                                amount: "10000"
+                            },
+                            market: {
+                                base: "factory/osmo13s0f55s8ppwm35npn53pkndphzyctfl7gu8q9d/ubtc",
+                                quote: "factory/osmo13s0f55s8ppwm35npn53pkndphzyctfl7gu8q9d/uusdc"
+                            }
+                        }
+                    })),
+                    funds: []
+                }
+            }]
+        })
+    }, [address]);
+
     useEffect(() => {
         window.addEventListener('scroll', updateTriggerBoundingRect, true);
         window.addEventListener('resize', updateTriggerBoundingRect, true);
@@ -92,13 +121,13 @@ function App() {
             }
             if (event.data.type === 'tx-response') {
                 setBroadcasting(false);
-                setTimeout(() => alert(JSON.stringify(event.data.response) || event.data.error?.message), 50);
+                console.error(JSON.stringify(event.data.response) || event.data.error?.message);
             }
             if (event.data.type === 'notification') {
                 setNotifications(event.data.messages);
             }
             if (event.data.type === 'wallet-error') {
-                setTimeout(() => alert(event.data.error?.message), 50);
+                console.error(event.data.error?.message);
             }
         }
         window.addEventListener('message', handleMessage);
@@ -131,6 +160,9 @@ function App() {
             <button disabled={!address || broadcasting} onClick={sendToMyself}>
                 Send 1 token to myself {broadcasting ? '- broadcasting' : ''}
             </button>
+            <button disabled={!address || broadcasting} onClick={executeWasmContract}>
+                Execute WASM contract {broadcasting ? '- broadcasting' : ''}
+            </button>
             <br />
             <button onClick={() => connectWallet('Keplr')}>
                 Connect to Keplr
@@ -138,6 +170,10 @@ function App() {
             <br />
             <button onClick={() => connectWallet('MetaMask')}>
                 Connect to MetaMask
+            </button>
+            <br />
+            <button onClick={() => connectWallet('')}>
+                Disconnect
             </button>
             <div className='snack-bar-messages'>
                 {notifications.map((notification) =>

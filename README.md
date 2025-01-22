@@ -153,6 +153,9 @@ useEffect(() => {
     if (event.data.type === 'wallet-error') {
       console.log(event.data.error);
     }
+    if (event.data.type === 'balances') {
+      console.log(event.data.balances);
+    }
   }
   window.addEventListener('message', handleMessage);
   return () => window.removeEventListener('message', handleMessage);
@@ -167,6 +170,7 @@ useEffect(() => {
 - **`tx-response`**: Returns the outcome of a transaction broadcast that you initiated with the `executeTx` message. The response may contain details of the successfully broadcasted transaction (`event.data.response`) or an error message (`event.data.error`).
 - **`notification`**: Passes along any notification messages from the widget (`event.data.messages`). You can log or display these notifications in your UI as needed.
 - **`wallet-error`**: Notifies your application of an error that occurred during a wallet connection attempt. You can handle these errors by displaying a user-friendly message, logging for debugging, etc.
+- **`balances`**: Provides the user's wallet balances. This message includes a detailed list of assets, each with properties such as denom (denomination), amount (balance in the smallest unit), displayAmount (formatted amount for display), and symbol (user-friendly asset symbol). You can use this data to update the wallet UI or display account balances.
 
 Listening for these messages and implementing corresponding actions in your application ensures a seamless and responsive experience for users interacting with the Dymension Connect Widget.
 
