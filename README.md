@@ -58,18 +58,6 @@ Utilize the postMessage API to send messages from your application to the widget
 const sendMessage = useCallback((message) => {
     iframeRef.current?.contentWindow?.postMessage(message, DYMENSION_CONNECT_URL);
 }, []);
-
-sendMessage({
-    type: 'setStyles',
-    styles: {
-        '--black-light': 'rgb(63 81 59)',
-        '--black-light-rgb': '63, 81, 59',
-        '--black-dark': 'rgb(27 40 24)',
-        '--black-dark-rgb': '27, 40, 24',
-        '--background-color': 'rgb(42 59 42)',
-        '--background-color-secondary': 'rgb(63 78 63)'
-    }
-});
 sendMessage({type: 'setMenuAlign', align: 'center'});
 ```
 #### Optional messages that can be sent to the widget:
